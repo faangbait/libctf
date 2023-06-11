@@ -3,7 +3,7 @@ import pwn, re, time
 
 class Pwnable(pwn.tube):
     debug = True
-    test_challenges = {}
+    test_challenges = []
     query_regex = r""
     flag_regex = r""
 
@@ -33,18 +33,18 @@ class Pwnable(pwn.tube):
             time.sleep(.05)
         return match
 
-    def test(self, solve):
-        fail=False
-        for test in self.test_challenges:
-            match = re.match(self.query_regex, test["challenge"].decode("utf-8"))
-            res = str(solve(match)).encode("utf-8")
-            if test["response"] != res:
-                print(f"FAIL\t{test['challenge']}\t{test['response']}\t{res}")
-                fail=True
-            else:
-                print(f"PASS\t{test['challenge']}\t{test['response']}\tPASS")
-        if fail:
-            exit(0)
+    # def test(self, solve):
+    #     fail=False
+    #     for test in self.test_challenges:
+    #         match = re.match(self.query_regex, test["challenge"].decode("utf-8"))
+    #         res = str(solve(match)).encode("utf-8")
+    #         if test["response"] != res:
+    #             print(f"FAIL\t{test['challenge']}\t{test['response']}\t{res}")
+    #             fail=True
+    #         else:
+    #             print(f"PASS\t{test['challenge']}\t{test['response']}\tPASS")
+    #     if fail:
+    #         exit(0)
 
     def response(self, response: bytes):
         if self.debug:
@@ -52,11 +52,11 @@ class Pwnable(pwn.tube):
         self.sendline(response)
 
 
-    def start(self, solve: callable):
-        print("PWNING... PLEASE WAIT...")
-        while True:
-            match = self.challenge()
-            self.response(str(solve(match)).encode("utf-8"))
+    # def start(self, solve: callable):
+    #     print("PWNING... PLEASE WAIT...")
+    #     while True:
+    #         match = self.challenge()
+    #         self.response(str(solve(match)).encode("utf-8"))
 
 class Remote(pwn.remote, Pwnable):
     pass    
